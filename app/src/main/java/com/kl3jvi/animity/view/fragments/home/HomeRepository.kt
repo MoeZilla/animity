@@ -19,5 +19,4 @@ class HomeRepository @Inject constructor(private val apiHelper: AnimeService) {
 
     suspend fun fetchMovies(header: Map<String, String>, page: Int) =
         apiHelper.fetchMovies(header, page)
-
 }

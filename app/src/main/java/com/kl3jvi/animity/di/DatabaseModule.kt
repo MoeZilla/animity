@@ -3,6 +3,7 @@ package com.kl3jvi.animity.di
 import android.content.Context
 import com.kl3jvi.animity.model.database.AnimeDao
 import com.kl3jvi.animity.model.database.AppDatabase
+import com.kl3jvi.animity.model.database.ContentDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,12 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideAnimesDao(appDatabase: AppDatabase): AnimeDao {
+    fun provideAnimeDao(appDatabase: AppDatabase): AnimeDao {
         return appDatabase.animeDao()
+    }
+
+    @Provides
+    fun provideContentDao(appDatabase: AppDatabase): ContentDao {
+        return appDatabase.contentDao()
     }
 }
