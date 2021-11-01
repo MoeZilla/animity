@@ -42,9 +42,8 @@ class GetSearchResultUseCase @Inject constructor(private val searchRepository: S
                 Resource.Error(
                     e.localizedMessage ?: "Couldn't reach server. Check your internet connection.",
 
-                )
+                    )
             )
         }
     }
-
 }

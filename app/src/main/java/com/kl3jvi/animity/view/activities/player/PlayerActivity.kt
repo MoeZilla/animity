@@ -71,8 +71,11 @@ class PlayerActivity : AppCompatActivity() {
             val getIntentData = intent.getParcelableExtra<EpisodeModel>(Constants.EPISODE_DETAILS)
             val animeTitlePassed = intent.getStringExtra(Constants.ANIME_TITLE)
             val title = viewBinding.videoView.findViewById<TextView>(R.id.episodeName)
+            val episodeNumber = viewBinding.videoView.findViewById<TextView>(R.id.episodeNum)
             title.text =
-                getString(R.string.test).format(animeTitlePassed, getIntentData?.episodeNumber)
+                getString(R.string.anime_title).format(animeTitlePassed)
+            episodeNumber.text = getString(R.string.anime_title).replace("EP", "Episode")
+                .format(getIntentData?.episodeNumber)
             initialisePlayerLayout()
             viewModel.updateEpisodeUrl(getIntentData?.episodeurl.toString())
         }

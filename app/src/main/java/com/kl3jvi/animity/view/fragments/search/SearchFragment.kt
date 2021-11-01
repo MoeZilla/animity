@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -84,7 +83,9 @@ class SearchFragment : Fragment() {
                     binding.searchLoadingBar.visibility = View.GONE
                     binding.noSearchResult.visibility = View.GONE
                     binding.searchRecycler.visibility = View.VISIBLE
-                    res.data?.let { searchAdapter.passSearchData(it) }
+                    res.data?.let {
+                        searchAdapter.passSearchData(it)
+                    }
                 }
                 is Resource.Loading -> {
                     binding.searchRecycler.visibility = View.GONE
@@ -96,6 +97,7 @@ class SearchFragment : Fragment() {
                 }
             }
         })
+
     }
 
     fun navigateToDetails(animeDetails: AnimeMetaModel) {

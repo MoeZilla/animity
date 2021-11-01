@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.kl3jvi.animity.databinding.SearchLayoutBinding
 import com.kl3jvi.animity.model.entities.AnimeMetaModel
-import com.kl3jvi.animity.view.fragments.home.HomeFragment
 import com.kl3jvi.animity.view.fragments.search.SearchFragment
+import javax.inject.Inject
 
 
-class CustomSearchAdapter(private val fragment: Fragment) :
+class CustomSearchAdapter @Inject constructor(
+    private val fragment: Fragment
+) :
     RecyclerView.Adapter<CustomSearchAdapter.ViewHolder>() {
 
     private var list: List<AnimeMetaModel> = listOf()
@@ -35,11 +37,12 @@ class CustomSearchAdapter(private val fragment: Fragment) :
         holder.image.load(item.imageUrl)
         holder.title.text = item.title
         holder.extra.text = item.releasedDate
-        holder.card.setOnClickListener{
+        holder.card.setOnClickListener {
             if (fragment is SearchFragment) {
                 fragment.navigateToDetails(item)
             }
         }
+
 
     }
 

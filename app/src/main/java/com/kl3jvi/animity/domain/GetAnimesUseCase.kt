@@ -1,5 +1,6 @@
 package com.kl3jvi.animity.domain
 
+import com.google.firebase.ktx.Firebase
 import com.kl3jvi.animity.model.entities.AnimeMetaModel
 import com.kl3jvi.animity.utils.Constants
 import com.kl3jvi.animity.utils.Resource

@@ -24,6 +24,8 @@
     <color name="video_ripple">#73FFFFFF</color>
 
     <color name="darkBackground">#2B2C30</color>
+    <color name="searchBg">#211F30</color>
+
 
     <color name="primaryGrayBackground">#2B2C30</color> <!--0f0f10 0E0E10 303135 2B2C30-->
     <color name="primaryBlackBackground">#111111</color>

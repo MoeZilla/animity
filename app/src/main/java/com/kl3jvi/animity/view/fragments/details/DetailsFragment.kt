@@ -1,8 +1,10 @@
 package com.kl3jvi.animity.view.fragments.details
 
 
+
 import android.content.Intent
 import android.graphics.Color
+
 import android.os.Bundle
 import android.view.*
 import androidx.core.view.get
@@ -13,8 +15,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.request.CachePolicy
-import coil.transition.CrossfadeTransition
-import coil.transition.Transition
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -76,6 +76,8 @@ class DetailsFragment : Fragment() {
                     CustomEpisodeAdapter(requireParentFragment(), animeInfo.title)
                 title = animeInfo.title
                 binding.episodeListRecycler.adapter = episodeAdapter
+
+
             }
             animeInfo.categoryUrl?.let { url ->
                 viewModel.passUrl(url)
@@ -83,6 +85,8 @@ class DetailsFragment : Fragment() {
             viewModel.passId(animeInfo.id)
         }
     }
+
+
 
     private fun fetchAnimeInfo() {
         viewModel.animeInfo.observe(viewLifecycleOwner, { res ->
@@ -191,13 +195,13 @@ class DetailsFragment : Fragment() {
                 var check = false
                 binding.imageButton.setOnClickListener {
                     check = if (!check) {
-                        binding.imageButton.load(R.drawable.ic_up_arrow){
+                        binding.imageButton.load(R.drawable.ic_up_arrow) {
                             crossfade(true)
                         }
                         episodeAdapter.getEpisodeInfo(episodeList.reversed())
                         true
                     } else {
-                        binding.imageButton.load(R.drawable.ic_down_arrow){
+                        binding.imageButton.load(R.drawable.ic_down_arrow) {
                             crossfade(true)
                         }
                         episodeAdapter.getEpisodeInfo(episodeList)

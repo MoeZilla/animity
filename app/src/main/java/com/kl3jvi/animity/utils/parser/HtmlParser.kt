@@ -105,13 +105,18 @@ object HtmlParser {
                     episodeNumber = null,
                     typeValue = typeValue,
                     insertionOrder = i,
-                    releasedDate = releasedDate
+                    releasedDate = releasedDate,
+                    synopsis = ""
                 )
             )
             i++
         }
         return animeMetaModelList
     }
+
+
+
+
 
     fun parseAnimeInfo(response: String): AnimeInfoModel {
         val document = Jsoup.parse(response)

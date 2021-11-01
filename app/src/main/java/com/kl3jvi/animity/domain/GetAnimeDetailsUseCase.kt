@@ -20,14 +20,14 @@ class GetAnimeDetailsUseCase @Inject constructor(
     private val detailsRepository: DetailsRepository,
     private val animeRepository: AnimeRepository
 ) {
-    fun fetchAnimeInfo(url: String): Flow<Resource<AnimeInfoModel>> = flow {
+    fun fetchAnimeInfo(url: String?): Flow<Resource<AnimeInfoModel>> = flow {
         try {
             emit(Resource.Loading())
             val response =
                 HtmlParser.parseAnimeInfo(
                     detailsRepository.fetchAnimeInfo(
                         Constants.getHeader(),
-                        url,
+                        url?:"",
                     ).string()
                 )
             emit(
@@ -38,7 +38,7 @@ class GetAnimeDetailsUseCase @Inject constructor(
         } catch (e: HttpException) {
             emit(
                 Resource.Error(
-                    message = e.localizedMessage ?: "An unexpected error occurred",
+                    message = "An unexpected error occurred",
                 )
             )
         } catch (e: IOException) {
