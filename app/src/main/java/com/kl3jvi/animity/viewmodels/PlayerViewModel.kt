@@ -1,11 +1,10 @@
 package com.kl3jvi.animity.viewmodels
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.*
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.kl3jvi.animity.domain.GetEpisodeInfoUseCase
+import com.kl3jvi.animity.model.database.ContentRepository
+import com.kl3jvi.animity.model.entities.Content
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,11 +12,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
-    private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase
+    private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
+    private val contentRepository: ContentRepository
 ) : ViewModel() {
 
     private var _vidUrl = MutableLiveData<String>()
@@ -42,4 +43,17 @@ class PlayerViewModel @Inject constructor(
             }
         }
     }.flowOn(Dispatchers.Main).asLiveData()
+
+
+    fun insertEpisodesToDatabase(episode: Content) = viewModelScope.launch {
+        contentRepository.insertContentToDatabase(content = episode)
+    }
+
+    fun updateTimeWatched(episode: Content) = viewModelScope.launch {
+        contentRepository.updateTimeWatched(content = episode)
+    }
+
+    val isOnDatabase = Transformations.switchMap(_vidUrl) {
+        getEpisodeInfoUseCase.checkIfExists(it).asLiveData()
+    }
 }

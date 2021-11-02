@@ -31,6 +31,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.kl3jvi.animity.R
 import com.kl3jvi.animity.databinding.ActivityPlayerBinding
+import com.kl3jvi.animity.model.entities.Content
 import com.kl3jvi.animity.model.entities.EpisodeModel
 import com.kl3jvi.animity.utils.Constants
 import com.kl3jvi.animity.utils.Constants.Companion.USER_AGENT
@@ -62,6 +63,10 @@ class PlayerActivity : AppCompatActivity() {
     private var trackSelector: DefaultTrackSelector? = null
     private var currentTime = 0L
 
+    private lateinit var animeTitlePassed: String
+    private lateinit var episodeUrl: String
+    private lateinit var episodeNumber: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
@@ -69,15 +74,37 @@ class PlayerActivity : AppCompatActivity() {
 
         if (intent.hasExtra(Constants.EPISODE_DETAILS)) {
             val getIntentData = intent.getParcelableExtra<EpisodeModel>(Constants.EPISODE_DETAILS)
-            val animeTitlePassed = intent.getStringExtra(Constants.ANIME_TITLE)
+            if (getIntentData != null) {
+                animeTitlePassed = intent.getStringExtra(Constants.ANIME_TITLE).toString()
+                episodeUrl = getIntentData.episodeurl
+                episodeNumber = getIntentData.episodeNumber
+            }
+
+
             val title = viewBinding.videoView.findViewById<TextView>(R.id.episodeName)
-            val episodeNumber = viewBinding.videoView.findViewById<TextView>(R.id.episodeNum)
+            val episodeNumberTextView =
+                viewBinding.videoView.findViewById<TextView>(R.id.episodeNum)
             title.text =
                 getString(R.string.anime_title).format(animeTitlePassed)
-            episodeNumber.text = getString(R.string.anime_title).replace("EP", "Episode")
+            episodeNumberTextView.text = getString(R.string.anime_title).replace("EP", "Episode")
                 .format(getIntentData?.episodeNumber)
             initialisePlayerLayout()
             viewModel.updateEpisodeUrl(getIntentData?.episodeurl.toString())
+
+            // Adds the episode to database if does not exists
+            viewModel.isOnDatabase.observe(this) { episodeIsInDatabase ->
+                if (!episodeIsInDatabase) {
+                    viewModel.insertEpisodesToDatabase(
+                        Content(
+                            episodeUrl = episodeUrl,
+                            animeName = animeTitlePassed,
+                            episodeNumber = episodeNumber,
+                            watchedDuration = 0,
+                            duration = 0
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -114,6 +141,15 @@ class PlayerActivity : AppCompatActivity() {
         if (Util.SDK_INT > 23 && player == null) {
             if (player != null) {
                 player?.pause()
+                viewModel.updateTimeWatched(
+                    Content(
+                        episodeUrl = episodeUrl,
+                        animeName = animeTitlePassed,
+                        episodeNumber = episodeNumber,
+                        watchedDuration = 0,
+                        duration = player!!.duration
+                    )
+                )
                 onIsPlayingChanged(isPlaying = false)
             }
             releasePlayer()
@@ -122,7 +158,7 @@ class PlayerActivity : AppCompatActivity() {
 
     @ExperimentalCoroutinesApi
     private fun initializePlayer() {
-        viewModel.videoUrlLiveData.observe(this, { res ->
+        viewModel.videoUrlLiveData.observe(this) { res ->
             when (res) {
                 is Resource.Success -> {
                     val videoM3U8Url = res.data.toString()
@@ -157,9 +193,10 @@ class PlayerActivity : AppCompatActivity() {
                                 exoPlayer.prepare()
                             }
 
+
                         val skipIntro =
                             viewBinding.videoView.findViewById<LinearLayout>(R.id.skipLayout)
-                        viewModel.audioProgress(player).observe(this, { currentProgress ->
+                        viewModel.audioProgress(player).observe(this) { currentProgress ->
                             currentProgress?.let {
                                 currentTime = it
                                 if (currentTime < 300000) {
@@ -171,7 +208,7 @@ class PlayerActivity : AppCompatActivity() {
                                     skipIntro.visibility = View.GONE
                                 }
                             }
-                        })
+                        }
                     } catch (e: ExoPlaybackException) {
                         showSnack(e.localizedMessage)
                     }
@@ -186,7 +223,7 @@ class PlayerActivity : AppCompatActivity() {
                     showSnack(res.message)
                 }
             }
-        })
+        }
     }
 
 

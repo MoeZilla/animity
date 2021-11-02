@@ -3,18 +3,19 @@ package com.kl3jvi.animity.viewmodels
 import androidx.lifecycle.*
 import com.kl3jvi.animity.domain.GetAnimeDetailsUseCase
 import com.kl3jvi.animity.model.database.AnimeRepository
+import com.kl3jvi.animity.model.database.ContentRepository
 import com.kl3jvi.animity.model.entities.AnimeMetaModel
+import com.kl3jvi.animity.model.entities.Content
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import okhttp3.internal.assertThreadDoesntHoldLock
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val getAnimeDetailsUseCase: GetAnimeDetailsUseCase,
-    private val animeRepository: AnimeRepository
+    private val animeRepository: AnimeRepository,
 ) : ViewModel() {
 
     private val _url = MutableLiveData<String>()
@@ -47,12 +48,14 @@ class DetailsViewModel @Inject constructor(
         _animeId.value = id
     }
 
-    fun insert(anime: AnimeMetaModel) = viewModelScope.launch {
+    fun insertAnimeToDatabase(anime: AnimeMetaModel) = viewModelScope.launch {
         animeRepository.insertFavoriteAnime(anime)
     }
 
-    fun delete(anime: AnimeMetaModel) = viewModelScope.launch {
+    fun deleteAnimeFromDatabase(anime: AnimeMetaModel) = viewModelScope.launch {
         animeRepository.deleteAnime(anime)
     }
+
+
 }
 

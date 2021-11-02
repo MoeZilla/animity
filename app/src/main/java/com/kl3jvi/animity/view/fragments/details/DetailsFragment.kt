@@ -1,7 +1,6 @@
 package com.kl3jvi.animity.view.fragments.details
 
 
-
 import android.content.Intent
 import android.graphics.Color
 
@@ -22,6 +21,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.kl3jvi.animity.R
 import com.kl3jvi.animity.databinding.FragmentDetailsBinding
+import com.kl3jvi.animity.model.entities.Content
 import com.kl3jvi.animity.utils.Constants
 import com.kl3jvi.animity.utils.Constants.Companion.getBackgroundColor
 import com.kl3jvi.animity.utils.Constants.Companion.getColor
@@ -31,6 +31,7 @@ import com.kl3jvi.animity.view.activities.player.PlayerActivity
 import com.kl3jvi.animity.view.adapters.CustomEpisodeAdapter
 import com.kl3jvi.animity.viewmodels.DetailsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
 class DetailsFragment : Fragment() {
@@ -87,9 +88,8 @@ class DetailsFragment : Fragment() {
     }
 
 
-
     private fun fetchAnimeInfo() {
-        viewModel.animeInfo.observe(viewLifecycleOwner, { res ->
+        viewModel.animeInfo.observe(viewLifecycleOwner) { res ->
             when (res) {
                 is Resource.Success -> {
                     res.data?.let { info ->
@@ -142,7 +142,7 @@ class DetailsFragment : Fragment() {
                     showSnack(res.message)
                 }
             }
-        })
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -153,14 +153,14 @@ class DetailsFragment : Fragment() {
     }
 
     private fun observeDatabase() {
-        viewModel.isOnDatabase.observe(viewLifecycleOwner, {
+        viewModel.isOnDatabase.observe(viewLifecycleOwner) {
             check = it
             if (!check) {
                 menu[0].setIcon(R.drawable.ic_favorite_uncomplete)
             } else {
                 menu[0].setIcon(R.drawable.ic_favorite_complete)
             }
-        })
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -168,12 +168,12 @@ class DetailsFragment : Fragment() {
             R.id.add_to_favorites -> {
                 check = if (!check) {
                     menu[0].setIcon(R.drawable.ic_favorite_complete)
-                    viewModel.insert(anime = args.animeDetails)
+                    viewModel.insertAnimeToDatabase(anime = args.animeDetails)
                     showSnack("Anime added to Favorites")
                     true
                 } else {
                     menu[0].setIcon(R.drawable.ic_favorite_uncomplete)
-                    viewModel.delete(args.animeDetails)
+                    viewModel.deleteAnimeFromDatabase(args.animeDetails)
                     showSnack("Anime removed from Favorites")
                     false
                 }
@@ -183,10 +183,14 @@ class DetailsFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun fetchEpisodeList() {
-        viewModel.episodeList.observe(viewLifecycleOwner, { episodeListResponse ->
+        viewModel.episodeList.observe(viewLifecycleOwner) { episodeListResponse ->
             episodeListResponse.data?.let { episodeList ->
                 episodeAdapter.getEpisodeInfo(episodeList)
+
+
+
                 binding.resultEpisodesText.text =
                     requireActivity().getString(
                         R.string.total_episodes,
@@ -222,7 +226,7 @@ class DetailsFragment : Fragment() {
                     binding.resultPlayMovie.visibility = View.GONE
                 }
             }
-        })
+        }
     }
 
     override fun onResume() {

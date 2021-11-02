@@ -86,7 +86,6 @@ class GetAnimeDetailsUseCase @Inject constructor(
         }
     }
 
-
     fun checkIfExists(id: Int) = flow {
         emit(animeRepository.checkIfAnimeIsOnDatabase(id))
     }

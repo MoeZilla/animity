@@ -1,6 +1,7 @@
 package com.kl3jvi.animity.view.fragments.search
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,7 +78,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun getSearchData() {
-        viewModel.searchResult.observe(viewLifecycleOwner, { res ->
+        viewModel.searchResult.observe(viewLifecycleOwner) { res ->
             when (res) {
                 is Resource.Success -> {
                     binding.searchLoadingBar.visibility = View.GONE
@@ -96,7 +97,7 @@ class SearchFragment : Fragment() {
                     showSnack(res.message)
                 }
             }
-        })
+        }
 
     }
 
