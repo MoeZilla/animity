@@ -24,12 +24,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build
-    name: Create Release
-      uses: softprops/action-gh-release@v1
+      run: ./gradlew assembleDebug --stacktrace
+    - name: Upload APK
+      uses: actions/upload-artifact@v1
       with:
-        tag_name: "kk${{ env.COMMIT_COUNT }}"
-        prerelease: false
-        name: "app r${{ env.COMMIT_COUNT }}"
-        files: |
-          animity/build/outputs/apk/release/*.apk
+        name: app
+        path: animity/build/outputs/apk/debug/animity-debug.apk
