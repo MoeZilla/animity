@@ -25,7 +25,11 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - uses: actions/upload-artifact@v2
+    name: Create Release
+      uses: softprops/action-gh-release@v1
       with:
-        name: demo-apk
-        path: app/build/outputs/apk/release/animity-release.apk
+        tag_name: "kk${{ env.COMMIT_COUNT }}"
+        prerelease: false
+        name: "app r${{ env.COMMIT_COUNT }}"
+        files: |
+          app/build/outputs/apk/release/*.apk
