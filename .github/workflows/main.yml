@@ -32,4 +32,4 @@ jobs:
         prerelease: false
         name: "app r${{ env.COMMIT_COUNT }}"
         files: |
-          app/build/outputs/apk/release/*.apk
+          animity/build/outputs/apk/release/*.apk
